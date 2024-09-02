@@ -18,15 +18,18 @@ def main():
 
     stats = choose_stat_generation()
     assign_stats(character, stats)
+    character['name'] = input('\nWhat is the name of your character?\n')
+    print_sheet(character)
 
 def print_sheet(char):
+    print()
     for line in make_sheet(char):
         print(line)
 
 def make_sheet(char):
     sheet = []
     stats = []
-    sheet.append(f'{char["name"].center(49, "_")}')
+    sheet.append(f'{char["name"].center(49, "-")}')
     sheet.append(f'Level: {char["level"]:>42}')
     sheet.append(f'Armor Class: {char["armor"]:>36}')
     sheet.append(f'Hit Points: {char["hp"]:>37}')
@@ -34,12 +37,12 @@ def make_sheet(char):
     sheet.append('-' * 49)
     sheet.append('|  STR  |  DEX  |  CON  |  INT  |  WIS  |  CHA  |')
     sheet.append('|-------|-------|-------|-------|-------|-------|')
-    stats.append(f'|{char["str"]:2} ({"+" if (char["str"] - 10) / 2 >= 0 else ""}{(floor((char["str"] - 10) / 2))})')
-    stats.append(f'|{char["dex"]:2} ({"+" if (char["dex"] - 10) / 2 >= 0 else ""}{(floor((char["dex"] - 10) / 2))})')
-    stats.append(f'|{char["con"]:2} ({"+" if (char["con"] - 10) / 2 >= 0 else ""}{(floor((char["con"] - 10) / 2))})')
-    stats.append(f'|{char["int"]:2} ({"+" if (char["int"] - 10) / 2 >= 0 else ""}{(floor((char["int"] - 10) / 2))})')
-    stats.append(f'|{char["wis"]:2} ({"+" if (char["wis"] - 10) / 2 >= 0 else ""}{(floor((char["wis"] - 10) / 2))})')
-    stats.append(f'|{char["cha"]:2} ({"+" if (char["cha"] - 10) / 2 >= 0 else ""}{(floor((char["cha"] - 10) / 2))})|')
+    stats.append(f'|{char["str"]:2} ({"+" if get_modifier(char["str"]) >= 0 else ""}{get_modifier(char["str"])})')
+    stats.append(f'|{char["dex"]:2} ({"+" if get_modifier(char["dex"]) >= 0 else ""}{get_modifier(char["dex"])})')
+    stats.append(f'|{char["con"]:2} ({"+" if get_modifier(char["con"]) >= 0 else ""}{get_modifier(char["con"])})')
+    stats.append(f'|{char["int"]:2} ({"+" if get_modifier(char["int"]) >= 0 else ""}{get_modifier(char["int"])})')
+    stats.append(f'|{char["wis"]:2} ({"+" if get_modifier(char["wis"]) >= 0 else ""}{get_modifier(char["wis"])})')
+    stats.append(f'|{char["cha"]:2} ({"+" if get_modifier(char["cha"]) >= 0 else ""}{get_modifier(char["cha"])})|')
     sheet.append(''.join(stats))
     sheet.append('-' * 49)
     return sheet
@@ -70,6 +73,31 @@ def choose_stat_generation():
         return roll_stats()
 
 def assign_stats(char, stats):
-    print(f'Your stats are: {stats}')
+    abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
+    print("\nStats need to be assigned to your character's six abilities:")
+    print('Strength (str), Dexterity (dex), Constitution (con), Intelligence (int), Wisdom (wis), and Charisma (cha)')
+
+    while len(stats) > 0:
+        print(f'\nStats to assign: {stats}')
+        print(f'Abilities to assign to: {abilities}')
+        try:
+            score, ability = input('Enter the number you want to assign and the ability to assign it to, seperated by a space.'
+                                'Then press ENTER:\n').split(' ')
+        except ValueError:
+            continue
+        
+        if int(score) in stats and ability.lower() in abilities:
+            char[ability.lower()] = int(score)
+            stats.remove(int(score))
+            abilities.remove(ability.lower())
+        else:
+            continue
+    
+    char['armor'] = 10 + get_modifier(char['dex'])
+    char['hp'] = 10 + get_modifier(char['con'])
+
+def get_modifier(score):
+    return floor((score - 10) / 2)
+
 
 main()
