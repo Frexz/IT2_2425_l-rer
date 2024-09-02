@@ -51,7 +51,14 @@
         ctx.rotate(- cannon.angle * Math.PI/180)
         ctx.fillStyle = '#283746'
         ctx.fillRect(cannon.x - cannon.pivotX, cannon.y - cannon.pivotY, cannon.width, cannon.height)
+        ctx.beginPath()
+        ctx.arc(cannon.mouthX + 5 - cannon.pivotX, cannon.mouthY - cannon.pivotY, 6, 0, 2*Math.PI)
+        ctx.fillStyle = 'black'
+        ctx.fill()
+        ctx.closePath()
         ctx.restore()
+        /* Cannon Holder */
+        
         ctx.fillStyle = '#4b3b34'
         ctx.fillRect(150, HEIGHT / 2 - 15, 50, 15)
         
