@@ -19,7 +19,10 @@ def main():
     stats = choose_stat_generation()
     assign_stats(character, stats)
     character['name'] = input('\nWhat is the name of your character?\n')
-    print_sheet(character)
+    
+    with open('character_sheet.txt', mode='w', encoding='utf-8') as file:
+        for line in make_sheet(character):
+            file.write(line + '\n')
 
 def print_sheet(char):
     print()
